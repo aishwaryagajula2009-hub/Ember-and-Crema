@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ember & Crema | Artisanal Café & Roastery</title>
+    
+    <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Custom Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FDFBF7',
+                        'cream-dark': '#F4EFE6',
+                        espresso: '#2C1E16',
+                        'espresso-light': '#4A362B',
+                        terracotta: '#C87D55',
+                        'terracotta-dark': '#B0663F',
+                        sage: '#4A5D4E',
+                        'sage-light': '#E9EFEA',
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-cream text-espresso font-sans antialiased selection:bg-terracotta selection:text-white overflow-x-hidden">
+
+    <!-- =====================================================================
+         1. STICKY NAVIGATION BAR
+         ===================================================================== -->
+    <header id="navbar" class="sticky top-0 z-40 w-full bg-cream/90 backdrop-blur-md border-b border-espresso/10 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Brand Logo -->
+                <a href="#home" class="flex items-center gap-2.5 group focus:outline-none">
+                    <div class="w-10 h-10 rounded-full bg-espresso text-cream flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+                        <i data-lucide="coffee" class="w-5 h-5 text-terracotta"></i>
+                    </div>
+                    <div>
+                        <span class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-espresso block leading-none">Ember & Crema</span>
+                        <span class="text-[11px] uppercase tracking-[0.2em] text-espresso/60 font-medium block mt-0.5">Roastery & Kitchen</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex items-center gap-8">
+                    <a href="#home" class="text-sm font-medium text-espresso/80 hover:text-terracotta transition-colors">Welcome</a>
+                    <a href="#specials" class="text-sm font-medium text-espresso/80 hover:text-terracotta transition-colors">Signature Specials</a>
+                    <a href="#menu" class="text-sm font-medium text-espresso/80 hover:text-terracotta transition-colors">Menu</a>
+                    <a href="#reviews" class="text-sm font-medium text-espresso/80 hover:text-terracotta transition-colors">Reviews</a>
+                    <a href="#visit" class="text-sm font-medium text-espresso/80 hover:text-terracotta transition-colors">Hours & Location</a>
+                </nav>
+
+                <!-- Desktop Actions: Favorites Tray & CTA -->
+                <div class="hidden md:flex items-center gap-3">
+                    <button id="favorites-btn" onclick="openFavoritesModal()" class="relative p-2.5 rounded-full text-espresso hover:bg-cream-dark transition-colors flex items-center gap-1.5 text-sm font-medium" aria-label="Saved Favorites">
+                        <i data-lucide="heart" class="w-5 h-5 text-terracotta"></i>
+                        <span class="hidden lg:inline">Saved</span>
+                        <span id="fav-badge" class="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-terracotta rounded-full">0</span>
+                    </button>
+                    <a href="#visit" class="px-5 py-2.5 rounded-full bg-espresso text-cream text-sm font-semibold hover:bg-espresso-light transition-all shadow-sm hover:shadow">
+                        Visit Us
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Toggle Button -->
+                <div class="flex items-center gap-2 md:hidden">
+                    <button onclick="openFavoritesModal()" class="relative p-2.5 rounded-full text-espresso hover:bg-cream-dark transition-colors" aria-label="Saved Favorites">
+                        <i data-lucide="heart" class="w-5 h-5 text-terracotta"></i>
+                        <span id="mobile-fav-badge" class="absolute top-1 right-1 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-terracotta rounded-full">0</span>
+                    </button>
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="p-2.5 rounded-xl text-espresso hover:bg-cream-dark transition-colors focus:outline-none" aria-label="Toggle Menu" aria-expanded="false">
+                        <i id="menu-icon-open" data-lucide="menu" class="w-6 h-6"></i>
+                        <i id="menu-icon-close" data-lucide="x" class="w-6 h-6 hidden"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Dropdown Navigation -->
+        <div id="mobile-menu" class="hidden md:hidden bg-cream border-b border-espresso/10 px-4 pt-2 pb-6 space-y-2 shadow-lg">
+            <a href="#home" onclick="closeMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-espresso hover:bg-cream-dark transition-colors">Welcome</a>
+            <a href="#specials" onclick="closeMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-espresso hover:bg-cream-dark transition-colors">Signature Specials</a>
+            <a href="#menu" onclick="closeMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-espresso hover:bg-cream-dark transition-colors">Menu</a>
+            <a href="#reviews" onclick="closeMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-espresso hover:bg-cream-dark transition-colors">Reviews</a>
+            <a href="#visit" onclick="closeMobileMenu()" class="block px-4 py-3 rounded-xl text-base font-medium text-espresso hover:bg-cream-dark transition-colors">Hours & Location</a>
+            <div class="pt-3 px-4">
+                <a href="#menu" onclick="closeMobileMenu()" class="w-full block text-center px-5 py-3 rounded-full bg-terracotta text-white font-semibold shadow-sm">
+                    Explore Menu
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- =====================================================================
+             2. HERO / WELCOME SECTION
+             ===================================================================== -->
+        <section id="home" class="relative py-12 sm:py-20 lg:py-24 overflow-hidden">
+            <!-- Subtle decorative ambient blob -->
+            <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-terracotta/10 blur-3xl pointer-events-none"></div>
+            <div class="absolute bottom-0 -left-24 w-80 h-80 rounded-full bg-sage/10 blur-3xl pointer-events-none"></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
+                    
+                    <!-- Left Column: Warm Editorial Copy -->
+                    <div class="lg:col-span-6 space-y-6 text-center lg:text-left">
+                        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sage-light text-sage text-xs sm:text-sm font-semibold tracking-wide">
+                            <span class="w-2 h-2 rounded-full bg-sage animate-pulse"></span>
+                            Small-Batch Roasted Daily • Open Today
+                        </div>
+
+                        <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-espresso leading-[1.12] tracking-tight">
+                            Slow mornings, <span class="italic font-normal text-terracotta">velvety crema</span> & warm sourdough.
+                        </h1>
+
+                        <p class="text-base sm:text-lg text-espresso/75 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                            Step into a sunlit neighborhood sanctuary where ethically sourced single-origin beans meet flaky, laminated pastries baked fresh at dawn.
+                        </p>
+
+                        <!-- Primary & Secondary CTAs -->
+                        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                            <a href="#menu" class="w-full sm:w-auto px-8 py-4 rounded-full bg-terracotta hover:bg-terracotta-dark text-white font-semibold text-base shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2">
+                                <span>Explore Menu</span>
+                                <i data-lucide="arrow-down-right" class="w-5 h-5"></i>
+                            </a>
+                            <a href="#visit" class="w-full sm:w-auto px-8 py-4 rounded-full bg-cream-dark hover:bg-espresso/10 text-espresso font-semibold text-base transition-all flex items-center justify-center gap-2">
+                                <i data-lucide="map-pin" class="w-4 h-4 text-terracotta"></i>
+                                <span>Find Our Café</span>
+                            </a>
+                        </div>
+
+                        <!-- Quick Highlights Strip -->
+                        <div class="pt-6 border-t border-espresso/10 grid grid-cols-3 gap-4 max-w-lg mx-auto lg:mx-0">
+                            <div>
+                                <p class="font-serif text-2xl font-bold text-espresso">100%</p>
+                                <p class="text-xs text-espresso/65 mt-0.5">Direct-Trade Beans</p>
+                            </div>
+                            <div>
+                                <p class="font-serif text-2xl font-bold text-espresso">6:30 AM</p>
+                                <p class="text-xs text-espresso/65 mt-0.5">Fresh Oven Bake</p>
+                            </div>
+                            <div>
+                                <p class="font-serif text-2xl font-bold text-espresso">4.9 ★</p>
+                                <p class="text-xs text-espresso/65 mt-0.5">850+ Local Reviews</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Cozy Café Photography Collage -->
+                    <div class="lg:col-span-6 relative">
+                        <div class="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/3] sm:aspect-[16/11] lg:aspect-[4/4] bg-cream-dark">
+                            <img 
+                                src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1200&q=85" 
+                                alt="Warm sunlight streaming into Ember & Crema café with artisan coffee and pastries"
+                                class="w-full h-full object-cover object-center transform hover:scale-105 transition-transform duration-700"
+                                onerror="this.onerror=null;this.src='https://placehold.co/800x800/2C1E16/FDFBF7?text=Ember+%26+Crema+Cafe';"
+                            >
+                            <div class="absolute inset-0 bg-gradient-to-t from-espresso/40 via-transparent to-transparent"></div>
+                        </div>
+
+                        <!-- Floating Barista Note Card -->
+                        <div class="hidden sm:flex items-center gap-4 bg-cream/95 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-espresso/10 max-w-xs absolute -bottom-6 -left-6">
+                            <img 
+                                src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=200&q=80" 
+                                alt="Latte art close up"
+                                class="w-16 h-16 rounded-xl object-cover flex-shrink-0"
+                                onerror="this.onerror=null;this.src='https://placehold.co/150x150/C87D55/FDFBF7?text=Latte';"
+                            >
+                            <div>
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-terracotta">Today's Pour</span>
+                                <p class="font-serif font-bold text-espresso text-base leading-snug">Ethiopia Yirgacheffe</p>
+                                <p class="text-xs text-espresso/70 mt-0.5">Notes of bergamot, jasmine & honey</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             4. CHEF'S / BARISTA'S SPECIAL ITEMS SECTION (Highlighted Creations)
+             ===================================================================== -->
+        <section id="specials" class="py-16 sm:py-24 bg-espresso text-cream relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Section Header -->
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+                    <div>
+                        <span class="text-terracotta text-xs sm:text-sm font-bold uppercase tracking-[0.2em]">Curated Craft</span>
+                        <h2 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold mt-2 text-cream">Barista & Baker Specials</h2>
+                    </div>
+                    <p class="text-cream/75 max-w-md text-sm sm:text-base">
+                        Limited-run seasonal creations crafted with autumn harvests, house-infused botanicals, and single-estate cacao.
+                    </p>
+                </div>
+
+                <!-- 3 Signature Cards Grid -->
+                <div id="specials-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Rendered dynamically via JavaScript for seamless Favorite/Quick-View state -->
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             3. INTERACTIVE MENU SECTION
+             ===================================================================== -->
+        <section id="menu" class="py-16 sm:py-24 bg-cream">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Section Heading -->
+                <div class="text-center max-w-2xl mx-auto mb-12">
+                    <span class="text-terracotta text-xs sm:text-sm font-bold uppercase tracking-[0.2em]">Crafted Daily</span>
+                    <h2 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-espresso mt-2">Our Seasonal Menu</h2>
+                    <p class="text-espresso/70 mt-3 text-sm sm:text-base">
+                        Every cup is dialed in to order. Oat, almond, and house-made macadamia milk available at no extra charge.
+                    </p>
+                </div>
+
+                <!-- Category Filter Tabs & Dietary Legend -->
+                <div class="flex flex-col lg:flex-row items-center justify-between gap-4 mb-10 pb-6 border-b border-espresso/10">
+                    <!-- Category Buttons -->
+                    <div id="category-tabs" class="flex flex-wrap items-center justify-center gap-2" role="tablist" aria-label="Menu Categories">
+                        <button data-category="All" onclick="filterMenu('All')" class="menu-tab active px-5 py-2.5 rounded-full text-sm font-semibold transition-all bg-espresso text-cream shadow-sm">
+                            All Items
+                        </button>
+                        <button data-category="Espresso & Coffee" onclick="filterMenu('Espresso & Coffee')" class="menu-tab px-5 py-2.5 rounded-full text-sm font-semibold transition-all bg-cream-dark text-espresso hover:bg-espresso/10">
+                            Espresso & Coffee
+                        </button>
+                        <button data-category="Artisanal Pastries" onclick="filterMenu('Artisanal Pastries')" class="menu-tab px-5 py-2.5 rounded-full text-sm font-semibold transition-all bg-cream-dark text-espresso hover:bg-espresso/10">
+                            Artisanal Pastries
+                        </button>
+                        <button data-category="All-Day Brunch" onclick="filterMenu('All-Day Brunch')" class="menu-tab px-5 py-2.5 rounded-full text-sm font-semibold transition-all bg-cream-dark text-espresso hover:bg-espresso/10">
+                            All-Day Brunch
+                        </button>
+                    </div>
+
+                    <!-- Dietary Key -->
+                    <div class="flex items-center gap-4 text-xs font-medium text-espresso/70">
+                        <span class="inline-flex items-center gap-1.5">
+                            <span class="px-2 py-0.5 rounded-md bg-sage-light text-sage font-bold">V</span> Vegetarian
+                        </span>
+                        <span class="inline-flex items-center gap-1.5">
+                            <span class="px-2 py-0.5 rounded-md bg-terracotta/15 text-terracotta-dark font-bold">GF</span> Gluten-Free
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Menu Cards Grid -->
+                <div id="menu-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             5. CUSTOMER REVIEWS SECTION
+             ===================================================================== -->
+        <section id="reviews" class="py-16 sm:py-24 bg-cream-dark/70 border-y border-espresso/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <!-- Header -->
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+                    <div>
+                        <span class="text-sage text-xs sm:text-sm font-bold uppercase tracking-[0.2em]">Community Love</span>
+                        <h2 class="font-serif text-3xl sm:text-4xl font-bold text-espresso mt-2">Notes From Our Regulars</h2>
+                    </div>
+                    <div class="flex items-center gap-3 bg-cream px-4 py-2.5 rounded-2xl border border-espresso/10 self-start md:self-auto">
+                        <div class="flex text-terracotta">
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                        </div>
+                        <span class="text-sm font-bold text-espresso">4.9 / 5</span>
+                        <span class="text-xs text-espresso/60">(850+ reviews)</span>
+                    </div>
+                </div>
+
+                <!-- Testimonials Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+                    <!-- Review 1 -->
+                    <article class="bg-cream p-7 rounded-3xl border border-espresso/10 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-1 text-terracotta mb-4" aria-label="5 out of 5 stars">
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            </div>
+                            <p class="text-espresso/85 text-sm sm:text-base leading-relaxed italic">
+                                "The Smoked Maple Cortado and warm cardamom knot have completely ruined other coffee shops for me. Sunlight pours through the front windows every morning—it’s the coziest workspace in town."
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3.5 mt-6 pt-5 border-t border-espresso/10">
+                            <img 
+                                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" 
+                                alt="Elena Rostova"
+                                class="w-11 h-11 rounded-full object-cover"
+                                onerror="this.onerror=null;this.src='https://placehold.co/100x100/C87D55/FDFBF7?text=ER';"
+                            >
+                            <div>
+                                <h3 class="font-bold text-sm text-espresso">Elena Rostova</h3>
+                                <p class="text-xs text-espresso/60">Local Architect • Regular since 2023</p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Review 2 -->
+                    <article class="bg-cream p-7 rounded-3xl border border-espresso/10 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-1 text-terracotta mb-4" aria-label="5 out of 5 stars">
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            </div>
+                            <p class="text-espresso/85 text-sm sm:text-base leading-relaxed italic">
+                                "Finally a café that takes both pour-over coffee and gluten-free baking seriously. Their fig & pistachio almond tart is crisp, nutty, and not overly sweet. Truly warm hospitality."
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3.5 mt-6 pt-5 border-t border-espresso/10">
+                            <img 
+                                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" 
+                                alt="Marcus Vance"
+                                class="w-11 h-11 rounded-full object-cover"
+                                onerror="this.onerror=null;this.src='https://placehold.co/100x100/4A5D4E/FDFBF7?text=MV';"
+                            >
+                            <div>
+                                <h3 class="font-bold text-sm text-espresso">Marcus Vance</h3>
+                                <p class="text-xs text-espresso/60">Food Photographer</p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Review 3 -->
+                    <article class="bg-cream p-7 rounded-3xl border border-espresso/10 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-1 text-terracotta mb-4" aria-label="5 out of 5 stars">
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            </div>
+                            <p class="text-espresso/85 text-sm sm:text-base leading-relaxed italic">
+                                "We come every Sunday for the Truffle Mushroom Tartine and a pot of single-origin filter coffee. Even when there’s a weekend line, the baristas greet you by name with genuine warmth."
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3.5 mt-6 pt-5 border-t border-espresso/10">
+                            <img 
+                                src="https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80" 
+                                alt="Priya Nair"
+                                class="w-11 h-11 rounded-full object-cover"
+                                onerror="this.onerror=null;this.src='https://placehold.co/100x100/2C1E16/FDFBF7?text=PN';"
+                            >
+                            <div>
+                                <h3 class="font-bold text-sm text-espresso">Priya Nair</h3>
+                                <p class="text-xs text-espresso/60">Neighborhood Book Club Host</p>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             6. OPENING HOURS & LOCATION SECTION
+             ===================================================================== -->
+        <section id="visit" class="py-16 sm:py-24 bg-cream">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-14">
+                    <span class="text-terracotta text-xs sm:text-sm font-bold uppercase tracking-[0.2em]">Come Say Hello</span>
+                    <h2 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-espresso mt-2">Hours & Location</h2>
+                    <p class="text-espresso/70 mt-3 text-sm sm:text-base">
+                        Tucked along tree-lined Elmwood Avenue with patio seating, indoor fireplace nooks, and fast fiber Wi-Fi.
+                    </p>
+                </div>
+
+                <!-- Two-Column Layout -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
+                    
+                    <!-- Left Column: Weekly Opening Hours & Direct Contact -->
+                    <div class="lg:col-span-5 bg-cream-dark/60 p-7 sm:p-9 rounded-3xl border border-espresso/10 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between gap-2 pb-5 border-b border-espresso/10">
+                                <div class="flex items-center gap-2.5">
+                                    <i data-lucide="clock" class="w-5 h-5 text-terracotta"></i>
+                                    <h3 class="font-serif text-2xl font-bold text-espresso">Opening Hours</h3>
+                                </div>
+                                <span id="open-status-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-sage-light text-sage">
+                                    <span class="w-2 h-2 rounded-full bg-sage"></span>
+                                    Open Now
+                                </span>
+                            </div>
+
+                            <!-- Hours Schedule List -->
+                            <ul id="hours-list" class="mt-6 space-y-3.5 text-sm sm:text-base">
+                                <li data-day="1" class="flex items-center justify-between py-1.5 px-3 rounded-xl transition-colors">
+                                    <span class="font-medium text-espresso/85">Monday</span>
+                                    <span class="font-semibold text-espresso">6:30 AM – 6:00 PM</span>
+                                </li>
+                                <li data-day="2" class="flex items-center justify-between py-1.5 px-3 rounded-xl transition-colors">
+                                    <span class="font-medium text-espresso/85">Tuesday</span>
+                                    <span class="font-semibold text-espresso">6:30 AM – 6:00 PM</span>
+                                </li>
+                                <li data-day="3" class="flex items-center justify-between py-1.5 px-3 rounded-xl transition-colors">
+                                    <span class="font-medium text-espresso/85">Wednesday</span>
+                                    <span class="font-semibold text-espresso">6:30 AM – 6:00 PM</span>
+                                </li>
+                                <li data-day="4" class="flex items-center justify-between py-1.5 px-3 rounded-xl transition-colors">
+                                    <span class="font-medium text-espresso/85">Thursday</span>
+                                    <span class="font-semibold text-espresso">6:30 AM – 7:00 PM</span>
+                                </li>
+                                <li data-day="5" class="flex items-center justify-between py-1.5 px-3 rounded-xl transition-colors">
+                                    <span class="font-medium text-espresso/85">Friday</span>
+                                    <span class="font-semibold text-espresso">6:30 AM – 8:00 PM</span>
+                                </li>
+                                <li data-day="6" class="flex items-center justify-between py-1.5 px-3 rounded-xl bg-terracotta/10 border border-terracotta/20">
+                                    <span class="font-semibold text-espresso flex items-center gap-2">
+                                        Saturday
+                                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-terracotta text-white">Brunch</span>
+                                    </span>
+                                    <span class="font-bold text-espresso">7:30 AM – 8:00 PM</span>
+                                </li>
+                                <li data-day="0" class="flex items-center justify-between py-1.5 px-3 rounded-xl bg-terracotta/10 border border-terracotta/20">
+                                    <span class="font-semibold text-espresso flex items-center gap-2">
+                                        Sunday
+                                        <span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-terracotta text-white">Brunch</span>
+                                    </span>
+                                    <span class="font-bold text-espresso">7:30 AM – 5:00 PM</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Contact Details -->
+                        <div class="mt-8 pt-6 border-t border-espresso/10 space-y-3 text-sm">
+                            <div class="flex items-start gap-3">
+                                <i data-lucide="map-pin" class="w-4 h-4 text-terracotta mt-1 flex-shrink-0"></i>
+                                <div>
+                                    <p class="font-semibold text-espresso">418 Elmwood Avenue, Arts District</p>
+                                    <p class="text-espresso/65">Portland, OR 97205</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="phone" class="w-4 h-4 text-terracotta flex-shrink-0"></i>
+                                <a href="tel:+15035550194" class="font-medium text-espresso hover:text-terracotta transition-colors">(503) 555-0194</a>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="mail" class="w-4 h-4 text-terracotta flex-shrink-0"></i>
+                                <a href="mailto:hello@emberandcrema.com" class="font-medium text-espresso hover:text-terracotta transition-colors">hello@emberandcrema.com</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Interactive Stylized Map Card -->
+                    <div class="lg:col-span-7 relative rounded-3xl overflow-hidden border border-espresso/15 shadow-lg min-h-[380px] flex flex-col justify-between bg-[#EAE4D7]">
+                        <!-- Stylized Architectural Vector Map Background -->
+                        <svg class="absolute inset-0 w-full h-full object-cover" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <!-- Base Land -->
+                            <rect width="800" height="600" fill="#EFE9DD"/>
+                            <!-- Park Green Area (Sage) -->
+                            <path d="M510 50 C590 40, 730 70, 760 180 C780 260, 680 310, 560 280 C490 260, 460 120, 510 50 Z" fill="#DCE5DD"/>
+                            <text x="565" y="175" fill="#4A5D4E" font-family="Plus Jakarta Sans, sans-serif" font-size="13" font-weight="600" letter-spacing="1.5">LAURELHURST PARK</text>
+                            <!-- River / Creek -->
+                            <path d="M-20 490 Q 180 450, 340 530 T 820 510" stroke="#CBD8DC" stroke-width="28" fill="none"/>
+                            <!-- City Grid Blocks -->
+                            <rect x="70" y="70" width="130" height="100" rx="12" fill="#E5DEC9"/>
+                            <rect x="240" y="70" width="170" height="100" rx="12" fill="#E5DEC9"/>
+                            <rect x="70" y="210" width="130" height="140" rx="12" fill="#E5DEC9"/>
+                            <rect x="240" y="210" width="170" height="140" rx="12" fill="#E5DEC9"/>
+                            <rect x="450" y="320" width="230" height="120" rx="12" fill="#E5DEC9"/>
+                            <!-- Streets -->
+                            <line x1="220" y1="0" x2="220" y2="600" stroke="#FDFBF7" stroke-width="16"/>
+                            <line x1="430" y1="0" x2="430" y2="600" stroke="#FDFBF7" stroke-width="20"/>
+                            <line x1="0" y1="190" x2="800" y2="190" stroke="#FDFBF7" stroke-width="18"/>
+                            <line x1="0" y1="375" x2="800" y2="375" stroke="#FDFBF7" stroke-width="14"/>
+                            <!-- Street Labels -->
+                            <text x="260" y="194" fill="#7A685C" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="700" letter-spacing="2">ELMWOOD AVENUE</text>
+                            <text x="434" y="120" fill="#7A685C" font-family="Plus Jakarta Sans, sans-serif" font-size="11" font-weight="700" letter-spacing="2" transform="rotate(90 434 120)">NW 14TH ST</text>
+                        </svg>
+
+                        <!-- Top Floating Neighborhood Pill -->
+                        <div class="relative z-10 p-6 flex flex-wrap items-center justify-between gap-3">
+                            <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cream/95 backdrop-blur-md text-espresso text-xs font-bold shadow-sm border border-espresso/10">
+                                <i data-lucide="trees" class="w-4 h-4 text-sage"></i>
+                                2 Blocks West of Laurelhurst Park
+                            </span>
+                            <button onclick="copyAddress()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-espresso/90 hover:bg-espresso text-cream text-xs font-semibold shadow-sm transition-colors">
+                                <i data-lucide="copy" class="w-3.5 h-3.5 text-terracotta"></i>
+                                Copy Address
+                            </button>
+                        </div>
+
+                        <!-- Center Interactive Café Pin -->
+                        <div class="relative z-10 my-auto mx-auto flex flex-col items-center">
+                            <div class="bg-espresso text-cream px-4 py-2 rounded-2xl shadow-xl mb-2 text-center border border-cream/15">
+                                <p class="font-serif font-bold text-sm">Ember & Crema</p>
+                                <p class="text-[11px] text-cream/75">418 Elmwood Ave</p>
+                            </div>
+                            <div class="relative flex items-center justify-center">
+                                <span class="absolute w-12 h-12 rounded-full bg-terracotta/30 animate-ping"></span>
+                                <div class="relative w-11 h-11 rounded-full bg-terracotta text-white flex items-center justify-center shadow-lg border-2 border-cream">
+                                    <i data-lucide="coffee" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Action Overlay Bar -->
+                        <div class="relative z-10 p-5 sm:p-6">
+                            <div class="bg-cream/95 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-espresso/10 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+                                <div class="flex items-center gap-3 text-center sm:text-left">
+                                    <div class="hidden sm:flex w-10 h-10 rounded-xl bg-sage-light text-sage items-center justify-center flex-shrink-0">
+                                        <i data-lucide="bike" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-sm text-espresso">Easy Street Parking & Bike Racks</p>
+                                        <p class="text-xs text-espresso/65">Covered courtyard seating • Dog-friendly patio</p>
+                                    </div>
+                                </div>
+                                <a 
+                                    href="https://maps.google.com/?q=418+Elmwood+Avenue+Portland+OR" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    class="w-full sm:w-auto px-6 py-3 rounded-full bg-espresso hover:bg-espresso-light text-cream text-sm font-semibold transition-all flex items-center justify-center gap-2 shadow-sm flex-shrink-0"
+                                >
+                                    <span>Get Directions</span>
+                                    <i data-lucide="external-link" class="w-4 h-4 text-terracotta"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- =====================================================================
+         7. FOOTER WITH NEWSLETTER SIGNUP & SOCIAL LINKS
+         ===================================================================== -->
+    <footer class="bg-espresso text-cream pt-16 pb-10 border-t border-cream/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-cream/10">
+                
+                <!-- Brand Column -->
+                <div class="lg:col-span-4 space-y-4">
+                    <a href="#home" class="inline-flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-full bg-terracotta text-white flex items-center justify-center">
+                            <i data-lucide="coffee" class="w-4 h-4"></i>
+                        </div>
+                        <span class="font-serif text-2xl font-bold tracking-tight text-cream">Ember & Crema</span>
+                    </a>
+                    <p class="text-sm text-cream/70 leading-relaxed max-w-sm">
+                        Small-batch specialty coffee roasters and neighborhood bakery dedicated to slow mornings, warm hospitality, and seasonal craft.
+                    </p>
+                    <!-- Social Links -->
+                    <div class="flex items-center gap-3 pt-2">
+                        <a href="#footer-social" onclick="showToast('Opening Ember & Crema on Instagram (@emberandcrema)')" aria-label="Instagram" class="w-10 h-10 rounded-full bg-cream/10 hover:bg-terracotta text-cream flex items-center justify-center transition-colors">
+                            <i data-lucide="instagram" class="w-4 h-4"></i>
+                        </a>
+                        <a href="#footer-social" onclick="showToast('Opening Ember & Crema on Facebook')" aria-label="Facebook" class="w-10 h-10 rounded-full bg-cream/10 hover:bg-terracotta text-cream flex items-center justify-center transition-colors">
+                            <i data-lucide="facebook" class="w-4 h-4"></i>
+                        </a>
+                        <a href="#footer-social" onclick="showToast('Opening Ember & Crema Spotify Café Playlist')" aria-label="Spotify Playlist" class="w-10 h-10 rounded-full bg-cream/10 hover:bg-terracotta text-cream flex items-center justify-center transition-colors">
+                            <i data-lucide="music" class="w-4 h-4"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="lg:col-span-3 space-y-3">
+                    <h4 class="font-serif text-lg font-bold text-cream">Explore</h4>
+                    <ul class="space-y-2.5 text-sm text-cream/70">
+                        <li><a href="#home" class="hover:text-terracotta transition-colors">Our Story & Welcome</a></li>
+                        <li><a href="#specials" class="hover:text-terracotta transition-colors">Barista Specials</a></li>
+                        <li><a href="#menu" class="hover:text-terracotta transition-colors">Seasonal Menu</a></li>
+                        <li><a href="#reviews" class="hover:text-terracotta transition-colors">Guest Reviews</a></li>
+                        <li><a href="#visit" class="hover:text-terracotta transition-colors">Hours & Directions</a></li>
+                    </ul>
+                </div>
+
+                <!-- Newsletter Signup Column -->
+                <div class="lg:col-span-5 space-y-4">
+                    <h4 class="font-serif text-lg font-bold text-cream">The Sunday Roast Letter</h4>
+                    <p class="text-sm text-cream/70 leading-relaxed">
+                        Receive first access to single-origin micro-lot releases, seasonal pastry drops, and weekend cupping invites.
+                    </p>
+                    <form id="newsletter-form" onsubmit="handleNewsletterSubmit(event)" class="flex flex-col sm:flex-row gap-2.5 pt-1">
+                        <label for="newsletter-email" class="sr-only">Email address</label>
+                        <input 
+                            id="newsletter-email" 
+                            type="email" 
+                            required 
+                            placeholder="you@example.com" 
+                            class="w-full px-4 py-3 rounded-full bg-cream/10 border border-cream/20 text-cream placeholder-cream/45 text-sm focus:outline-none focus:border-terracotta focus:ring-1 focus:ring-terracotta"
+                        >
+                        <button type="submit" class="px-6 py-3 rounded-full bg-terracotta hover:bg-terracotta-dark text-white font-semibold text-sm transition-colors flex-shrink-0 shadow-sm">
+                            Subscribe
+                        </button>
+                    </form>
+                    <p class="text-xs text-cream/50">No spam ever. Unsubscribe with one click.</p>
+                </div>
+
+            </div>
+
+            <!-- Copyright Line -->
+            <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-cream/55">
+                <p>&copy; 2026 Ember & Crema Roastery & Kitchen. All rights reserved.</p>
+                <p>Crafted with warmth • 418 Elmwood Ave, Portland</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- =====================================================================
+         INTERACTIVE QUICK-VIEW / ORDER PREVIEW MODAL
+         ===================================================================== -->
+    <div id="item-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-espresso/70 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="bg-cream text-espresso rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-espresso/15 transform transition-all">
+            <div class="relative h-56 sm:h-64 bg-cream-dark">
+                <img id="modal-img" src="" alt="" class="w-full h-full object-cover">
+                <button onclick="closeItemModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-espresso/80 hover:bg-espresso text-cream flex items-center justify-center transition-colors" aria-label="Close Modal">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+                <span id="modal-badge" class="absolute bottom-4 left-4 px-3 py-1 rounded-full bg-terracotta text-white text-xs font-bold uppercase tracking-wider shadow"></span>
+            </div>
+            <div class="p-6 sm:p-8 space-y-4">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <h3 id="modal-title" class="font-serif text-2xl font-bold text-espresso"></h3>
+                        <p id="modal-subtitle" class="text-xs font-semibold uppercase tracking-wider text-sage mt-1"></p>
+                    </div>
+                    <span id="modal-price" class="font-serif text-2xl font-bold text-terracotta"></span>
+                </div>
+                <p id="modal-desc" class="text-sm sm:text-base text-espresso/80 leading-relaxed"></p>
+                <div id="modal-notes" class="p-3.5 rounded-2xl bg-cream-dark text-xs text-espresso/75 flex items-center gap-2.5">
+                    <i data-lucide="sparkles" class="w-4 h-4 text-terracotta flex-shrink-0"></i>
+                    <span id="modal-notes-text"></span>
+                </div>
+                <div class="pt-3 flex flex-col sm:flex-row gap-3">
+                    <button id="modal-fav-btn" class="flex-1 py-3 px-5 rounded-full bg-espresso hover:bg-espresso-light text-cream font-semibold text-sm transition-colors flex items-center justify-center gap-2">
+                        <i data-lucide="heart" class="w-4 h-4 text-terracotta"></i>
+                        <span>Save to My Café List</span>
+                    </button>
+                    <button onclick="closeItemModal()" class="py-3 px-5 rounded-full bg-cream-dark hover:bg-espresso/10 text-espresso font-semibold text-sm transition-colors">
+                        Done
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         SAVED FAVORITES TRAY MODAL
+         ===================================================================== -->
+    <div id="favorites-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-espresso/70 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="fav-modal-title">
+        <div class="bg-cream text-espresso rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl border border-espresso/15">
+            <div class="flex items-center justify-between pb-4 border-b border-espresso/10">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="heart" class="w-5 h-5 text-terracotta fill-current"></i>
+                    <h3 id="fav-modal-title" class="font-serif text-xl font-bold text-espresso">Your Café Favorites</h3>
+                </div>
+                <button onclick="closeFavoritesModal()" class="p-1.5 rounded-full hover:bg-cream-dark text-espresso" aria-label="Close Favorites">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div id="favorites-list" class="py-5 max-h-72 overflow-y-auto space-y-3">
+                <!-- Dynamically populated -->
+            </div>
+            <div class="pt-4 border-t border-espresso/10 flex items-center justify-between">
+                <span id="favorites-total" class="text-sm font-bold text-espresso">Estimated Total: $0.00</span>
+                <button onclick="closeFavoritesModal(); showToast('Favorites list ready for counter pickup!')" class="px-5 py-2.5 rounded-full bg-terracotta hover:bg-terracotta-dark text-white text-xs font-bold uppercase tracking-wider transition-colors">
+                    Ready to Order
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         NON-INTRUSIVE TOAST NOTIFICATION
+         ===================================================================== -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 pointer-events-none transition-all duration-300 max-w-sm">
+        <div class="bg-espresso text-cream px-5 py-3.5 rounded-2xl shadow-2xl border border-cream/15 flex items-center gap-3">
+            <div class="w-7 h-7 rounded-full bg-terracotta/20 text-terracotta flex items-center justify-center flex-shrink-0">
+                <i data-lucide="check" class="w-4 h-4"></i>
+            </div>
+            <p id="toast-message" class="text-sm font-medium leading-snug"></p>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         JAVASCRIPT LOGIC
+         ===================================================================== -->
+    <script>
+        // 1. Signature Specials Data
+        const signatureSpecials = [
+            {
+                id: 'spec-1',
+                name: 'Smoked Maple & Sea Salt Cortado',
+                badge: 'Signature',
+                category: 'Barista Creation',
+                price: 5.75,
+                description: 'Double ristretto pulled over Vermont barrel-aged maple syrup, velvety micro-foamed oat milk, and a whisper of flaky Maldon sea salt.',
+                notes: 'Tasting notes: Toasted pecan, dark caramel, and warm cedar smoke.',
+                image: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&w=800&q=85'
+            },
+            {
+                id: 'spec-2',
+                name: 'Spiced Fig & Pistachio Frangipane Tart',
+                badge: 'Seasonal',
+                category: 'Morning Bake',
+                price: 6.50,
+                description: 'Crisp brown-butter pastry shell filled with roasted Bronte pistachio cream, fresh Black Mission figs, and wildflower honey glaze.',
+                notes: 'Baked in small batches at 7:00 AM daily. Vegetarian (V).',
+                image: 'https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=800&q=85'
+            },
+            {
+                id: 'spec-3',
+                name: 'Cardamom Rose Cold Brew Tonic',
+                badge: 'Staff Pick',
+                category: 'Botanical Refresh',
+                price: 6.25,
+                description: '18-hour Kyoto-style slow-drip single-origin cold brew layered over artisanal botanical tonic, crushed green cardamom, and dried rose petals.',
+                notes: 'Crisp, effervescent, and naturally gluten-free & vegan (V, GF).',
+                image: 'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=800&q=85'
+            }
+        ];
+
+        // 2. Full Interactive Menu Data
+        const menuItems = [
+            // Espresso & Coffee
+            {
+                id: 'menu-1',
+                name: 'House Espresso (Double)',
+                category: 'Espresso & Coffee',
+                price: 3.75,
+                dietary: ['V', 'GF'],
+                description: 'Our flagship Ember Blend—syrupy body with notes of roasted hazelnut, dark cocoa, and blood orange.'
+            },
+            {
+                id: 'menu-2',
+                name: 'Honey Lavender Flat White',
+                category: 'Espresso & Coffee',
+                price: 5.50,
+                dietary: ['V', 'GF'],
+                description: 'Velvety micro-foam poured over double espresso infused with culinary lavender and local raw wildflower honey.'
+            },
+            {
+                id: 'menu-3',
+                name: 'Single-Origin V60 Pour Over',
+                category: 'Espresso & Coffee',
+                price: 5.25,
+                dietary: ['V', 'GF'],
+                description: 'Hand-brewed to order. Ask your barista for today’s rotating microlot from Ethiopia, Colombia, or Kenya.'
+            },
+            {
+                id: 'menu-4',
+                name: 'Ceremonial Uji Matcha Latte',
+                category: 'Espresso & Coffee',
+                price: 6.00,
+                dietary: ['V', 'GF'],
+                description: 'First-harvest stone-ground Uji matcha whisked with bamboo chasen and steamed oat or whole milk.'
+            },
+            // Artisanal Pastries
+            {
+                id: 'menu-5',
+                name: 'Cultured Butter Croissant',
+                category: 'Artisanal Pastries',
+                price: 4.50,
+                dietary: ['V'],
+                description: '72-hour fermented laminated dough made with Normandy-style cultured butter for a shattering, honeycomb crumb.'
+            },
+            {
+                id: 'menu-6',
+                name: 'Swedish Cardamom Brioche Knot',
+                category: 'Artisanal Pastries',
+                price: 4.95,
+                dietary: ['V'],
+                description: 'Hand-braided sweet brioche swirled with freshly mortared green cardamom pods, brown sugar, and pearl sugar.'
+            },
+            {
+                id: 'menu-7',
+                name: 'Olive Oil & Rosemary Polenta Cake',
+                category: 'Artisanal Pastries',
+                price: 5.25,
+                dietary: ['V', 'GF'],
+                description: 'Tender almond-flour and stone-ground cornmeal cake brightened with Meyer lemon zest and garden rosemary.'
+            },
+            // All-Day Brunch
+            {
+                id: 'menu-8',
+                name: 'Heirloom Avocado & Dukkah Sourdough',
+                category: 'All-Day Brunch',
+                price: 13.50,
+                dietary: ['V'],
+                description: 'Thick-cut country levain, smashed Hass avocado, whipped feta, pickled shallots, radish, and toasted hazelnut dukkah.'
+            },
+            {
+                id: 'menu-9',
+                name: 'Wild Chanterelle & Truffle Tartine',
+                category: 'All-Day Brunch',
+                price: 15.00,
+                dietary: ['V'],
+                description: 'Thyme-roasted forest mushrooms, Gruyère fondue, soft-poached pasture egg, and aged balsamic drizzle.'
+            },
+            {
+                id: 'menu-10',
+                name: 'Coconut Chia & Roasted Berry Bowl',
+                category: 'All-Day Brunch',
+                price: 11.75,
+                dietary: ['V', 'GF'],
+                description: 'Vanilla-bean coconut chia pudding topped with warm balsamic strawberries, toasted coconut flakes, and hemp hearts.'
+            }
+        ];
+
+        // State for Saved Favorites
+        let favorites = [];
+        let currentCategory = 'All';
+
+        // Initialize Page
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSpecials();
+            renderMenu('All');
+            highlightCurrentDay();
+            lucide.createIcons();
+        });
+
+        // Render 3 Signature Special Cards
+        function renderSpecials() {
+            const grid = document.getElementById('specials-grid');
+            grid.innerHTML = signatureSpecials.map(item => {
+                const isFav = favorites.some(f => f.id === item.id);
+                return `
+                <article class="group bg-espresso-light/60 rounded-3xl overflow-hidden border border-cream/10 hover:border-terracotta/50 transition-all duration-300 flex flex-col justify-between shadow-lg">
+                    <div>
+                        <div class="relative h-60 overflow-hidden bg-espresso">
+                            <img 
+                                src="${item.image}" 
+                                alt="${item.name}" 
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                onerror="this.onerror=null;this.src='https://placehold.co/600x400/4A362B/FDFBF7?text=${encodeURIComponent(item.name)}';"
+                            >
+                            <div class="absolute inset-0 bg-gradient-to-t from-espresso via-transparent to-transparent opacity-70"></div>
+                            <span class="absolute top-4 left-4 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-md ${
+                                item.badge === 'Signature' ? 'bg-terracotta text-white' :
+                                item.badge === 'Seasonal' ? 'bg-sage text-white' :
+                                'bg-cream text-espresso'
+                            }">
+                                ${item.badge}
+                            </span>
+                            <button 
+                                onclick="toggleFavorite('${item.id}')" 
+                                aria-label="Save ${item.name} to favorites"
+                                class="absolute top-4 right-4 w-10 h-10 rounded-full bg-espresso/75 hover:bg-espresso text-cream flex items-center justify-center backdrop-blur-sm transition-transform active:scale-90"
+                            >
+                                <i data-lucide="heart" class="w-5 h-5 ${isFav ? 'text-terracotta fill-current' : 'text-cream'}"></i>
+                            </button>
+                        </div>
+
+                        <div class="p-6 sm:p-7">
+                            <div class="flex items-start justify-between gap-3">
+                                <h3 class="font-serif text-xl sm:text-2xl font-bold text-cream leading-snug">${item.name}</h3>
+                                <span class="font-serif text-xl font-bold text-terracotta flex-shrink-0">$${item.price.toFixed(2)}</span>
+                            </div>
+                            <p class="text-cream/75 text-sm leading-relaxed mt-3">
+                                ${item.description}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="px-6 sm:px-7 pb-6 pt-2 flex items-center gap-3">
+                        <button 
+                            onclick="openItemModal('${item.id}')" 
+                            class="flex-1 py-3 px-4 rounded-full bg-cream/10 hover:bg-terracotta text-cream text-sm font-semibold transition-colors flex items-center justify-center gap-2"
+                        >
+                            <span>Tasting Notes & Quick View</span>
+                            <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </article>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        // Render Filtered Menu Cards
+        function renderMenu(category) {
+            currentCategory = category;
+            const grid = document.getElementById('menu-grid');
+            const filtered = category === 'All' 
+                ? menuItems 
+                : menuItems.filter(item => item.category === category);
+
+            grid.innerHTML = filtered.map(item => {
+                const isFav = favorites.some(f => f.id === item.id);
+                const badgesHtml = item.dietary.map(tag => {
+                    const style = tag === 'V' 
+                        ? 'bg-sage-light text-sage' 
+                        : 'bg-terracotta/15 text-terracotta-dark';
+                    return `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold ${style}">${tag}</span>`;
+                }).join('');
+
+                return `
+                <article class="bg-cream-dark/45 hover:bg-cream-dark/80 p-6 rounded-3xl border border-espresso/10 transition-all duration-200 flex flex-col justify-between group">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="text-[11px] font-bold uppercase tracking-wider text-espresso/50">${item.category}</span>
+                            <div class="flex items-center gap-1.5">${badgesHtml}</div>
+                        </div>
+                        <div class="flex items-start justify-between gap-3">
+                            <h3 class="font-serif text-xl font-bold text-espresso group-hover:text-terracotta-dark transition-colors">${item.name}</h3>
+                            <span class="font-serif text-lg font-bold text-espresso flex-shrink-0">$${item.price.toFixed(2)}</span>
+                        </div>
+                        <p class="text-sm text-espresso/75 leading-relaxed mt-2.5">
+                            ${item.description}
+                        </p>
+                    </div>
+
+                    <div class="mt-5 pt-4 border-t border-espresso/10 flex items-center justify-between">
+                        <button 
+                            onclick="toggleFavorite('${item.id}')" 
+                            class="inline-flex items-center gap-1.5 text-xs font-bold transition-colors ${isFav ? 'text-terracotta' : 'text-espresso/65 hover:text-espresso'}"
+                        >
+                            <i data-lucide="heart" class="w-4 h-4 ${isFav ? 'fill-current' : ''}"></i>
+                            <span>${isFav ? 'Saved to List' : 'Save Item'}</span>
+                        </button>
+                        <button 
+                            onclick="toggleFavorite('${item.id}', true)" 
+                            class="px-3.5 py-1.5 rounded-full bg-espresso/5 hover:bg-espresso hover:text-cream text-espresso text-xs font-semibold transition-colors"
+                        >
+                            + Add to Order List
+                        </button>
+                    </div>
+                </article>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        // Category Tab Switcher
+        function filterMenu(category) {
+            const tabs = document.querySelectorAll('.menu-tab');
+            tabs.forEach(tab => {
+                if (tab.dataset.category === category) {
+                    tab.classList.remove('bg-cream-dark', 'text-espresso', 'hover:bg-espresso/10');
+                    tab.classList.add('bg-espresso', 'text-cream', 'shadow-sm');
+                } else {
+                    tab.classList.remove('bg-espresso', 'text-cream', 'shadow-sm');
+                    tab.classList.add('bg-cream-dark', 'text-espresso', 'hover:bg-espresso/10');
+                }
+            });
+            renderMenu(category);
+        }
+
+        // Favorites / Order List Management
+        function getAllItems() {
+            return [...signatureSpecials, ...menuItems];
+        }
+
+        function toggleFavorite(itemId, forceAdd = false) {
+            const all = getAllItems();
+            const item = all.find(i => i.id === itemId);
+            if (!item) return;
+
+            const existingIndex = favorites.findIndex(f => f.id === itemId);
+            if (existingIndex > -1 && !forceAdd) {
+                favorites.splice(existingIndex, 1);
+                showToast(`Removed "${item.name}" from your saved list.`);
+            } else if (existingIndex === -1) {
+                favorites.push(item);
+                showToast(`Added "${item.name}" to your café list!`);
+            } else {
+                showToast(`"${item.name}" is already in your café list.`);
+            }
+
+            updateFavoriteBadges();
+            renderSpecials();
+            renderMenu(currentCategory);
+        }
+
+        function updateFavoriteBadges() {
+            const count = favorites.length;
+            document.getElementById('fav-badge').textContent = count;
+            document.getElementById('mobile-fav-badge').textContent = count;
+        }
+
+        // Quick-View Modal for Signature Specials
+        function openItemModal(itemId) {
+            const item = signatureSpecials.find(i => i.id === itemId);
+            if (!item) return;
+
+            document.getElementById('modal-img').src = item.image;
+            document.getElementById('modal-img').alt = item.name;
+            document.getElementById('modal-badge').textContent = item.badge;
+            document.getElementById('modal-title').textContent = item.name;
+            document.getElementById('modal-subtitle').textContent = item.category;
+            document.getElementById('modal-price').textContent = `$${item.price.toFixed(2)}`;
+            document.getElementById('modal-desc').textContent = item.description;
+            document.getElementById('modal-notes-text').textContent = item.notes;
+
+            const favBtn = document.getElementById('modal-fav-btn');
+            favBtn.onclick = () => {
+                toggleFavorite(item.id, true);
+                closeItemModal();
+            };
+
+            const modal = document.getElementById('item-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeItemModal() {
+            const modal = document.getElementById('item-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Saved Favorites Modal
+        function openFavoritesModal() {
+            const listEl = document.getElementById('favorites-list');
+            const totalEl = document.getElementById('favorites-total');
+
+            if (favorites.length === 0) {
+                listEl.innerHTML = `
+                    <div class="text-center py-8 space-y-2">
+                        <p class="font-serif text-lg font-semibold text-espresso/75">Your café list is empty</p>
+                        <p class="text-xs text-espresso/55">Tap the heart icon on any drink or pastry to save it for your visit.</p>
+                    </div>
+                `;
+                totalEl.textContent = 'Estimated Total: $0.00';
+            } else {
+                listEl.innerHTML = favorites.map(item => `
+                    <div class="flex items-center justify-between gap-3 p-3 rounded-2xl bg-cream-dark/70 border border-espresso/10">
+                        <div>
+                            <p class="font-bold text-sm text-espresso">${item.name}</p>
+                            <p class="text-xs text-espresso/60">$${item.price.toFixed(2)}</p>
+                        </div>
+                        <button onclick="removeFromModal('${item.id}')" class="p-1.5 rounded-full hover:bg-espresso/10 text-espresso/60 hover:text-espresso" aria-label="Remove item">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `).join('');
+                const sum = favorites.reduce((acc, item) => acc + item.price, 0);
+                totalEl.textContent = `Estimated Total: $${sum.toFixed(2)}`;
+            }
+
+            const modal = document.getElementById('favorites-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function removeFromModal(id) {
+            toggleFavorite(id, false);
+            openFavoritesModal();
+        }
+
+        function closeFavoritesModal() {
+            const modal = document.getElementById('favorites-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // Mobile Navigation Toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const openIcon = document.getElementById('menu-icon-open');
+            const closeIcon = document.getElementById('menu-icon-close');
+            const btn = document.getElementById('mobile-menu-btn');
+
+            const isHidden = menu.classList.contains('hidden');
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                openIcon.classList.add('hidden');
+                closeIcon.classList.remove('hidden');
+                btn.setAttribute('aria-expanded', 'true');
+            } else {
+                closeMobileMenu();
+            }
+        }
+
+        function closeMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const openIcon = document.getElementById('menu-icon-open');
+            const closeIcon = document.getElementById('menu-icon-close');
+            const btn = document.getElementById('mobile-menu-btn');
+
+            menu.classList.add('hidden');
+            openIcon.classList.remove('hidden');
+            closeIcon.classList.add('hidden');
+            btn.setAttribute('aria-expanded', 'false');
+        }
+
+        // Highlight Current Day in Opening Hours
+        function highlightCurrentDay() {
+            const today = new Date().getDay(); // 0 = Sun, 1 = Mon...
+            const items = document.querySelectorAll('#hours-list li');
+            items.forEach(li => {
+                if (parseInt(li.dataset.day, 10) === today) {
+                    li.classList.add('ring-2', 'ring-sage', 'bg-sage-light/70');
+                    const dayLabel = li.querySelector('span');
+                    if (dayLabel && !dayLabel.innerHTML.includes('Today')) {
+                        dayLabel.innerHTML += ` <span class="ml-1.5 text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-sage text-white font-bold">Today</span>`;
+                    }
+                }
+            });
+        }
+
+        // Copy Address Utility
+        function copyAddress() {
+            const address = '418 Elmwood Avenue, Portland, OR 97205';
+            const tempInput = document.createElement('input');
+            tempInput.value = address;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showToast('Address copied to clipboard!');
+        }
+
+        // Newsletter Signup Handler
+        function handleNewsletterSubmit(event) {
+            event.preventDefault();
+            const input = document.getElementById('newsletter-email');
+            if (input.value.trim()) {
+                showToast(`Welcome to The Sunday Roast Letter, ${input.value.trim()}!`);
+                input.value = '';
+            }
+        }
+
+        // Toast Feedback Helper
+        let toastTimeout;
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-message');
+            msgEl.textContent = message;
+
+            toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3400);
+        }
+
+        // Close modals on backdrop click or Escape key
+        window.addEventListener('click', (e) => {
+            if (e.target === document.getElementById('item-modal')) closeItemModal();
+            if (e.target === document.getElementById('favorites-modal')) closeFavoritesModal();
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeItemModal();
+                closeFavoritesModal();
+                closeMobileMenu();
+            }
+        });
+    </script>
+</body>
+</html>
